@@ -10,6 +10,8 @@ public class CharacterStats : MonoBehaviour
     public characterType curType;
 
     PlayerContrpller playerContrpller;
+    Animator animator;
+    Vector2 originalScale;
 
     [Header("Common Stats")] //基础数值
     [SerializeField] float maxHealth;
@@ -85,11 +87,12 @@ public class CharacterStats : MonoBehaviour
         curAttack = attackTimer;
         //sp = npcSprite.gameObject.GetComponent<SpriteRenderer>();
         originalScaleX = npcSprite.localScale.x;
-
+        animator = GetComponent<Animator>();
     }
 
     private void Start()
     {
+        originalScale = transform.localScale;
         if (idleType == IdleType.Patrol) 
         {
             foreach (Transform child in gameObject.transform.parent) //巡逻模式
@@ -349,8 +352,8 @@ public class CharacterStats : MonoBehaviour
         {
             curHealth = 0;
         }
-
         rig2D.AddForce(direction, ForceMode2D.Impulse);
+        animator.SetTrigger("GetDamage");
     }
     private void HurtShader()
     {

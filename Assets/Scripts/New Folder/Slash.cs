@@ -20,7 +20,7 @@ public class Slash : MonoBehaviour
                 //other.GetComponentInChildren<HealthBar>().hp -= 20;
                 Vector2 difference = other.transform.position - transform.position;
                 difference.Normalize();
-                player.getDamage(15f, difference * 5f);
+                player.getDamage(15f, difference * 10f);
         }
     }
 }

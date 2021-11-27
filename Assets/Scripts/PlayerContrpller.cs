@@ -16,6 +16,8 @@ public class PlayerContrpller : MonoBehaviour
     public Camera cam;
 
     public GameObject[] guns;
+
+    Vector2 originalScale;
    
     private void Start()
     {
@@ -23,16 +25,17 @@ public class PlayerContrpller : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         guns[0].SetActive(true);
+        originalScale = transform.localScale;
     }
 
     private void Update()
     {
+        CharacterMoveAnimator();
         SwitchGun();
         moveH = Input.GetAxisRaw("Horizontal")*moveSpeed ;
         moveV = Input.GetAxisRaw("Vertical")*moveSpeed ;
         movenment.x = Input.GetAxisRaw("Horizontal");
         movenment.y = Input.GetAxisRaw("Vertical");
-       
     }
     private void FixedUpdate()
     {
@@ -40,6 +43,15 @@ public class PlayerContrpller : MonoBehaviour
         {
             rb.velocity = new Vector2(moveH, moveV);
             rb.MovePosition(rb.position + movenment * moveSpeed * Time.fixedDeltaTime);
+        }
+
+        if (moveH < 0)
+        {
+            transform.localScale = new Vector2(-originalScale.x, originalScale.y);
+        }
+        else 
+        {
+            transform.localScale = new Vector2(originalScale.x, originalScale.y);
         }
     }
     void SwitchGun()
@@ -72,5 +84,19 @@ public class PlayerContrpller : MonoBehaviour
         //}
     }
 
-
+    void CharacterMoveAnimator() 
+    {
+        if (moveH == 0 && moveV == 0)
+        {
+            animator.SetTrigger("Idle");
+        }
+        else if(moveV > 0)
+        {
+            animator.SetTrigger("Up");
+        }
+        else if (moveV <= 0)
+        {
+            animator.SetTrigger("Down");
+        }
+    }
 }
