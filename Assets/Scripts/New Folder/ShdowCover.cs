@@ -34,7 +34,7 @@ public class ShdowCover : MonoBehaviour
             }
 
             //僵尸启动
-            foreach (CharacterStats zombie in zombieList) 
+            foreach (ZombieStats zombie in zombieList) 
             {
                 if (zombie.CompareTag("Zombie"))
                 {
@@ -57,7 +57,7 @@ public class ShdowCover : MonoBehaviour
             }
 
             //列表中的僵尸重置
-            foreach (CharacterStats zombie in zombieList)
+            foreach (ZombieStats zombie in zombieList)
             {
                 if (zombie.CompareTag("Zombie"))
                 {

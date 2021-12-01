@@ -16,8 +16,8 @@ public class Slash : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-                CharacterStats player = other.GetComponent<CharacterStats>();
-                //other.GetComponentInChildren<HealthBar>().hp -= 20;
+                PlayerStats player = other.GetComponent<PlayerStats>();
+                other.GetComponentInChildren<HealthBar>().hp -= 20;
                 Vector2 difference = other.transform.position - transform.position;
                 difference.Normalize();
                 player.getDamage(15f, difference * 10f);

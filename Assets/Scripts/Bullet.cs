@@ -26,7 +26,7 @@ public class Bullet : MonoBehaviour
         {
             if (other.CompareTag("Zombie"))
             {
-                CharacterStats zombie = other.GetComponent<CharacterStats>();
+                ZombieStats zombie = other.GetComponent<ZombieStats>();
                 other.GetComponentInChildren<HealthBar>().hp -= 20;
                 Vector2 difference = other.transform.position - transform.position;
                 difference.Normalize();
