@@ -13,6 +13,11 @@ public class ZombieStats : CharacterStats
     public CharacterInfo curStatusInfo;
     [SerializeField] SpriteRenderer characterSprite;
 
+    public enum EnemyType {Melee, Range};
+    public EnemyType enemyType;
+    [SerializeField] GameObject bulletPrefab;
+    [SerializeField] Transform shootPos;
+
     [SerializeField] float hearRadius; //听觉距离 (zombie状态专用)
     [SerializeField] float attackRadius; //攻击距离
     [SerializeField] float moveSpeed1;
@@ -21,7 +26,6 @@ public class ZombieStats : CharacterStats
     //Layers
     [SerializeField] LayerMask soundLayer; //声音层(Zombie)
     [SerializeField] LayerMask humanLayer; //人类层
-
 
     [SerializeField] Collider2D curTarget; //当前目标
     [SerializeField] Collider2D[] soundSources; //声源列表
@@ -138,7 +142,7 @@ public class ZombieStats : CharacterStats
             }
             else//没有人类目标 
             {
-                if (soundSources.Length > 0 && !curTarget)//声音检测到目标且不为当前目标
+                if (soundSources.Length > 0 && !curTarget && isActive)//声音检测到目标且不为当前目标
                 {
                     int latestSound = soundSources.Length;
                     transform.position = Vector2.MoveTowards(transform.position, soundSources[latestSound - 1].transform.position, moveSpeed1 * Time.deltaTime);//僵尸就会向着最后出现的声音检测到的目标以moveSpeed1的速度移动
@@ -260,18 +264,10 @@ public class ZombieStats : CharacterStats
     private void ZombieAttack(Collider2D target)
     {
         Vector2 targerDir = target.transform.position - transform.position;
+
         if (!isDisable && !attacked)
         {
             attacked = true;
-            if (targerDir.y <= 0)
-            {
-                animator.SetBool("Down", true);
-            }
-            else 
-            {
-                animator.SetBool("Up", true);
-            }
-
             if (targerDir.x <= 0) //Left
             {
                 characterSprite.transform.localScale = new Vector2(-originalScaleX, characterSprite.transform.localScale.y);
@@ -280,8 +276,32 @@ public class ZombieStats : CharacterStats
             {
                 characterSprite.transform.localScale = new Vector2(originalScaleX, characterSprite.transform.localScale.y);
             }
+
+            //Melee
+            if (enemyType == EnemyType.Melee)
+            {
+                if (targerDir.y <= 0)
+                {
+                    animator.SetTrigger("Down");
+                }
+                else
+                {
+                    animator.SetTrigger("Up");
+                }
+            }
+            else if (enemyType == EnemyType.Range) 
+            {
+                animator.SetTrigger("Range");
+                targerDir.Normalize();
+                GameObject bullet = Instantiate(bulletPrefab, shootPos.position, Quaternion.identity);
+
+                float angle = Random.Range(-5f, 5f);
+                bullet.GetComponent<EnemyBullet>().SetSpeed(Quaternion.AngleAxis(angle, Vector3.forward) * targerDir);
+            }
         }
     }
+
+
 
     public void changeMode(int modeIndex)
     {

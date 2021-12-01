@@ -63,12 +63,11 @@ public class Gun1 : MonoBehaviour
     {
         animator.SetTrigger("Shoot");
        
-         GameObject bullet = Instantiate(bulletPrefab, muzzlePos.position, Quaternion.identity);
+        GameObject bullet = Instantiate(bulletPrefab, muzzlePos.position, Quaternion.identity);
        
         float angle = Random.Range(-5f, 5f);
-        bullet.GetComponent<Bullet>().SetSpeed(Quaternion .AngleAxis (angle ,Vector3 .forward )*direction );
+        bullet.GetComponent<Bullet>().SetSpeed(Quaternion.AngleAxis(angle ,Vector3.forward)*direction);
 
        Instantiate(bulletShellPrefab, bulletShellPOS.position, bulletShellPOS.rotation);
-       
     }
 }
