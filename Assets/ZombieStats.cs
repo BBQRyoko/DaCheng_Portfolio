@@ -4,11 +4,14 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class ZombieStats : CharacterStats
-{   
+{
+    PlayerContrpller playerContrpller;
+
     //当前的状态
-    public enum characterType { human, zombie };
-    public characterType curType;
-    public bool isRescued; //是否被救助
+    public bool isHuman;
+    public CharacterInfo[] statusList;
+    public CharacterInfo curStatusInfo;
+    [SerializeField] SpriteRenderer characterSprite;
 
     [SerializeField] float hearRadius; //听觉距离 (zombie状态专用)
     [SerializeField] float attackRadius; //攻击距离
@@ -21,10 +24,10 @@ public class ZombieStats : CharacterStats
 
 
     [SerializeField] Collider2D curTarget; //当前目标
-    [SerializeField] Collider2D detectedTarget; //当前目标
-    [SerializeField] SpriteRenderer characterSprite;
+    [SerializeField] Collider2D[] soundSources; //声源列表
+    [SerializeField] Collider2D humanTarget; //人类目标
+    [SerializeField] Collider2D attackTarget;
     public bool isActive;
-
     float deadTime;
 
     [Header("UI")]
@@ -44,10 +47,6 @@ public class ZombieStats : CharacterStats
 
     public bool isDisable; //是否无法移动
 
-    public Collider2D[] soundSources; //声源列表
-    public Collider2D humanTarget; //人类目标
-    public Collider2D attackTarget;
-
     public Collider2D zombieTarget;
     [SerializeField] float followSpeed; //跟随速度
 
@@ -59,7 +58,8 @@ public class ZombieStats : CharacterStats
 
     private void Awake()
     {
-        curHealth = maxHealth;//当前血量为最大值
+        playerContrpller = FindObjectOfType<PlayerContrpller>();
+        curHealth = maxHealth; //当前血量为最大值
         animator = GetComponentInChildren<Animator>();
         characterSprite = GetComponentInChildren<SpriteRenderer>();
         curAttack = attackTimer;
@@ -68,6 +68,7 @@ public class ZombieStats : CharacterStats
 
     private void Start()
     {
+
         if (idleType == IdleType.Patrol)
         {
             foreach (Transform child in gameObject.transform.parent) //巡逻模式
@@ -82,12 +83,14 @@ public class ZombieStats : CharacterStats
 
     void Update()
     {
-        if (curType == characterType.zombie)//若当前状态为僵尸则运行僵尸代码
+        animator.runtimeAnimatorController = curStatusInfo.animatorController;
+        characterSprite.sprite = curStatusInfo.sprite;
+
+        if (!isHuman)
         {
             ZombieUpdate();
-
         }
-        else if (curType == characterType.human) //若当前状态为人类则运行人类代码
+        else 
         {
             HumanUpdate();
         }
@@ -96,6 +99,7 @@ public class ZombieStats : CharacterStats
     void ZombieUpdate()
     {
         gameObject.layer = 8;//所有僵尸所在物理层为第8层
+        curStatusInfo = statusList[0];
 
         if (curHealth <= 0) //如果当前血量低于0 =死亡
         {
@@ -108,6 +112,7 @@ public class ZombieStats : CharacterStats
                 curHealth = maxHealth;
                 GetComponentInChildren<HealthBar>().hp = maxHealth;
                 deadTime = 0;
+                animator.SetBool("preDead", false);
             }
         }
 
@@ -162,41 +167,42 @@ public class ZombieStats : CharacterStats
     void HumanUpdate()
     {
         gameObject.layer = 6;//人类所在的物理层为6
+        curStatusInfo = statusList[1];
 
         ////NPC模式
-        //if (curMode == npcMode.follow) //若当前NPC的模式为跟随模式时
-        //{
-        //    float distance = Vector2.Distance(transform.position, playerContrpller.transform.position);//NPC与玩家距离
+        if (curMode == npcMode.follow) //若当前NPC的模式为跟随模式时
+        {
+            float distance = Vector2.Distance(transform.position, playerContrpller.transform.position);//NPC与玩家距离
 
-        //    if (distance >= 2)
-        //    {
-        //        transform.position = Vector2.MoveTowards(transform.position, playerContrpller.transform.position, followSpeed * Time.deltaTime);//当距离大于2时 则NPC以followSpeed的速递向玩家移动
-        //        npcCommand.SetActive(false);
-        //    }
-        //    else if (distance <= 1 && distance > 0)
-        //    {
-        //        if (Input.GetKey(KeyCode.E))
-        //        {
-        //            npcCommand.SetActive(true);
-        //        }
-        //    }
-        //}
-        //else if (curMode == npcMode.stay) //若当前NPC的模式为跟随模式时
-        //{
-        //    float distance = Vector2.Distance(transform.position, playerContrpller.transform.position);//NPC与玩家距离
+            if (distance >= 2)
+            {
+                transform.position = Vector2.MoveTowards(transform.position, playerContrpller.transform.position, followSpeed * Time.deltaTime);//当距离大于2时 则NPC以followSpeed的速递向玩家移动
+                npcCommand.SetActive(false);
+            }
+            else if (distance <= 1 && distance > 0)
+            {
+                if (Input.GetKey(KeyCode.E))
+                {
+                    npcCommand.SetActive(true);
+                }
+            }
+        }
+        else if (curMode == npcMode.stay) //若当前NPC的模式为跟随模式时
+        {
+            float distance = Vector2.Distance(transform.position, playerContrpller.transform.position);//NPC与玩家距离
 
-        //    if (distance >= 2)
-        //    {
-        //        npcCommand.SetActive(false);
-        //    }
-        //    else if (distance <= 1 && distance > 0)
-        //    {
-        //        if (Input.GetKey(KeyCode.E))
-        //        {
-        //            npcCommand.SetActive(true);
-        //        }
-        //    }
-        //}
+            if (distance >= 2)
+            {
+                npcCommand.SetActive(false);
+            }
+            else if (distance <= 1 && distance > 0)
+            {
+                if (Input.GetKey(KeyCode.E))
+                {
+                    npcCommand.SetActive(true);
+                }
+            }
+        }
 
         //僵尸检测
         zombieTarget = Physics2D.OverlapCircle(transform.position, viewRadius, zombieLayer);
@@ -293,7 +299,7 @@ public class ZombieStats : CharacterStats
 
     void OnDrawGizmosSelected()
     {
-        if (curType == characterType.zombie)
+        if (!isHuman)
         {
             Gizmos.color = Color.blue;
             Gizmos.DrawWireSphere(transform.position, hearRadius);
@@ -302,7 +308,7 @@ public class ZombieStats : CharacterStats
             Gizmos.color = Color.red;
             Gizmos.DrawWireSphere(transform.position, attackRadius);
         }
-        else if (curType == characterType.human)
+        else if (isHuman)
         {
             Gizmos.color = Color.green;
             Gizmos.DrawWireSphere(transform.position, viewRadius);

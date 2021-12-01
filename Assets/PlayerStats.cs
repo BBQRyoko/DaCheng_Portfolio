@@ -44,7 +44,7 @@ public class PlayerStats : CharacterStats
                 curRescue.rescueBar.fillAmount = rescueTime / 1.5f;//救助对象的救助的量就为按下时间/1.5
                 if (rescueTime >= 1.5f) //若救援时间大于1.5
                 {
-                    //curRescue.curType = characterType.human;//救援对象的Type变为human
+                    curRescue.isHuman = true;//救援对象的Type变为human
                     curRescue.curHealth = maxHealth;//救援对象的当前血量变为maxHealth
                     curRescue.rescueButton.gameObject.SetActive(false);//救援按钮不显示出来
                     curRescueTarget = null;//救助对象变为空项目

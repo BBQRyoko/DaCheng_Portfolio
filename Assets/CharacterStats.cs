@@ -27,6 +27,14 @@ public class CharacterStats : MonoBehaviour
         if (curHealth <= 0)
         {
             curHealth = 0;
+            if (transform.CompareTag("Zombie"))
+            {
+                animator.SetBool("preDead", true);
+            }
+            else if (transform.CompareTag("Human")) 
+            {
+                //人类的预死亡
+            }
         }
         rig2D.AddForce(direction, ForceMode2D.Impulse);
         animator.SetTrigger("GetDamage");
