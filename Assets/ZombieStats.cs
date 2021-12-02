@@ -9,6 +9,7 @@ public class ZombieStats : CharacterStats
 
     //当前的状态
     public bool isHuman;
+    public bool isStayOnTrigger;
     public CharacterInfo[] statusList;
     public CharacterInfo curStatusInfo;
     [SerializeField] SpriteRenderer characterSprite;
@@ -321,8 +322,6 @@ public class ZombieStats : CharacterStats
         }
     }
 
-
-
     public void changeMode(int modeIndex)
     {
         if (modeIndex == 0)
@@ -334,6 +333,24 @@ public class ZombieStats : CharacterStats
         {
             curMode = npcMode.stay;
             npcCommand.SetActive(false);
+        }
+    }
+
+    public void npcTrigger(Transform triggerTransform) 
+    {
+        Vector2 direction = new Vector2(triggerTransform.position.x - transform.position.x, triggerTransform.position.y - transform.position.y);
+
+        float distance = Vector2.Distance(triggerTransform.position, transform.position);
+
+        RaycastHit2D hitInfo = Physics2D.Raycast(transform.position, direction, distance, blockingLayer);
+
+        if (hitInfo.collider == null)
+        {
+            transform.position = Vector2.MoveTowards(transform.position, triggerTransform.position, followSpeed * Time.deltaTime);
+            if (distance <= 0.05) 
+            {
+                isStayOnTrigger = true;
+            }
         }
     }
 

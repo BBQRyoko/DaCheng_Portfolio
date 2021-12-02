@@ -7,9 +7,13 @@ public class PlayerStats : CharacterStats
     PlayerContrpller playerContrpller;
     [SerializeField] ZombieStats curRescueTarget;
     Collider2D rescueTarget; //僵尸目标检测
+    public Collider2D doorTriggerTarget;
+    public LayerMask doorTriggerLayer;
     [SerializeField] float rescueRadius; //救助范围
     public float rescueTime;
 
+    public List<ZombieStats> npcList = new List<ZombieStats>();
+    
     private void Awake()
     {
         playerContrpller = FindObjectOfType<PlayerContrpller>();
@@ -20,6 +24,17 @@ public class PlayerStats : CharacterStats
     private void Update()
     {
         RescueFunction ();
+        DoorTriggerNotice();
+        if (npcList != null) 
+        {
+            foreach (ZombieStats npc in npcList)
+            {
+                if (!npc.isHuman)
+                {
+                    npcList.Remove(npc);
+                }
+            }
+        }
     }
 
     void RescueFunction() //救助功能
@@ -44,6 +59,7 @@ public class PlayerStats : CharacterStats
                 curRescue.rescueBar.fillAmount = rescueTime / 1.5f;//救助对象的救助的量就为按下时间/1.5
                 if (rescueTime >= 1.5f) //若救援时间大于1.5
                 {
+                    npcList.Add(curRescueTarget);
                     curRescue.isHuman = true;//救援对象的Type变为human
                     curRescue.curHealth = maxHealth;//救援对象的当前血量变为maxHealth
                     curRescue.rescueButton.gameObject.SetActive(false);//救援按钮不显示出来
@@ -51,6 +67,7 @@ public class PlayerStats : CharacterStats
                     curRescue.GetComponentInChildren<HealthBar>().hp = maxHealth;
                     curRescue.gameObject.tag = "Human";
                     rescueTime = 0;
+
                 }
             }
             else if (Input.GetKeyUp(KeyCode.E)) //若输入E的时间 变为0时 则救助对象的救助进度量变为0
@@ -61,9 +78,35 @@ public class PlayerStats : CharacterStats
         }
     }
 
+    void DoorTriggerNotice() 
+    {
+        doorTriggerTarget = Physics2D.OverlapCircle(transform.position, viewRadius, doorTriggerLayer);
+
+        if (doorTriggerTarget != null)
+        {
+            for (int i = 0; i < npcList.Count; i++)
+            {
+                if (!npcList[i].isStayOnTrigger)
+                {
+                    npcList[i].npcTrigger(doorTriggerTarget.transform);
+                    return;
+                }
+            }
+        }
+        else 
+        {
+            foreach (ZombieStats npc in npcList)
+            {
+                npc.isStayOnTrigger = false;
+            }
+        }
+    }
+
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.blue;
         Gizmos.DrawWireSphere(transform.position, rescueRadius);
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireSphere(transform.position, viewRadius);
     }
 }
