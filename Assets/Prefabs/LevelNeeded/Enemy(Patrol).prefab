@@ -239,6 +239,10 @@ PrefabInstance:
       value: 256
       objectReference: {fileID: 0}
     - target: {fileID: 1812136835, guid: 48503ffed0a8db846b7f9b589344bdaf, type: 3}
+      propertyPath: blockingLayer.m_Bits
+      value: 1024
+      objectReference: {fileID: 0}
+    - target: {fileID: 1812136835, guid: 48503ffed0a8db846b7f9b589344bdaf, type: 3}
       propertyPath: statusList.Array.size
       value: 2
       objectReference: {fileID: 0}

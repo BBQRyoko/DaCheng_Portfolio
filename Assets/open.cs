@@ -9,16 +9,18 @@ public class open : MonoBehaviour
 
     private void OnTriggerStay2D(Collider2D other)
     {
-        Door.GetComponent<Animator>().SetBool("Open", true);
-        //if (other.gameObject.tag == "Player")
-        //{           
-        //    Door.GetComponent<Animator>().SetBool("Open", true);
-        //}
+        if (other.CompareTag("Player")||other.CompareTag("Human") )
+        {           
+            Door.GetComponent<Animator>().SetBool("Open", true);
+        }
        
        
     }
     private void OnTriggerExit2D(Collider2D other)
     {
-        Door.GetComponent<Animator>().SetBool("Open", false);
+        if (other.CompareTag("Player") || other.CompareTag("Human")) 
+        {
+            Door.GetComponent<Animator>().SetBool("Open", false);
+        }
     }
 }

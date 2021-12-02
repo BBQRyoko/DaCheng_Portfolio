@@ -26,6 +26,7 @@ public class ZombieStats : CharacterStats
     //Layers
     [SerializeField] LayerMask soundLayer; //声音层(Zombie)
     [SerializeField] LayerMask humanLayer; //人类层
+    [SerializeField] LayerMask blockingLayer;
 
     [SerializeField] Collider2D curTarget; //当前目标
     [SerializeField] Collider2D[] soundSources; //声源列表
@@ -127,7 +128,16 @@ public class ZombieStats : CharacterStats
 
         if (curTarget != null && isDisable == false && isActive == true && attacked == false) //当前有目标且僵尸可以移动时
         {
-            transform.position = Vector2.MoveTowards(transform.position, curTarget.transform.position, moveSpeed2 * Time.deltaTime);//则僵尸向当前目标以moveSpeed2的速度移动
+            Vector2 direction = new Vector2(curTarget.transform.position.x - transform.position.x, curTarget.transform.position.y - transform.position.y);
+
+            float distance = Vector2.Distance(curTarget.transform.position, transform.position);
+
+            RaycastHit2D hitInfo = Physics2D.Raycast(transform.position, direction, distance, blockingLayer);
+
+            if (hitInfo.collider == null)
+            {
+                transform.position = Vector2.MoveTowards(transform.position, curTarget.transform.position, moveSpeed2 * Time.deltaTime);//则僵尸向当前目标以moveSpeed2的速度移动
+            }
         }
 
         //目标检测
@@ -142,17 +152,28 @@ public class ZombieStats : CharacterStats
             }
             else//没有人类目标 
             {
+                curTarget = null;
                 if (soundSources.Length > 0 && !curTarget && isActive)//声音检测到目标且不为当前目标
                 {
                     int latestSound = soundSources.Length;
-                    transform.position = Vector2.MoveTowards(transform.position, soundSources[latestSound - 1].transform.position, moveSpeed1 * Time.deltaTime);//僵尸就会向着最后出现的声音检测到的目标以moveSpeed1的速度移动
+
+                    Vector2 direction = new Vector2(soundSources[latestSound - 1].transform.position.x - transform.position.x, soundSources[latestSound - 1].transform.position.y - transform.position.y);
+
+                    float distance = Vector2.Distance(soundSources[latestSound - 1].transform.position, transform.position);
+
+                    RaycastHit2D hitInfo = Physics2D.Raycast(transform.position, direction, distance, blockingLayer);
+
+                    if (hitInfo.collider == null)
+                    {
+                        transform.position = Vector2.MoveTowards(transform.position, soundSources[latestSound - 1].transform.position, moveSpeed1 * Time.deltaTime);//僵尸就会向着最后出现的声音检测到的目标以moveSpeed1的速度移动
+                    }
                 }
             }
+
             if (attackTarget != null)
             {
                 ZombieAttack(attackTarget);
             }
-
         }
 
         //攻击冷却
@@ -165,7 +186,6 @@ public class ZombieStats : CharacterStats
                 curAttack = attackTimer;
             }
         }
-
     }
 
     void HumanUpdate()
@@ -216,13 +236,13 @@ public class ZombieStats : CharacterStats
 
             if (distance >= 1)
             {
-                transform.position = Vector2.MoveTowards(transform.position, zombieTarget.transform.position, followSpeed * Time.deltaTime);//当距离大于2时 则NPC以followSpeed的速递向玩家移动
+                //transform.position = Vector2.MoveTowards(transform.position, zombieTarget.transform.position, followSpeed * Time.deltaTime);//当距离大于2时 则NPC以followSpeed的速递向玩家移动
             }
             else if (distance < 1 && distance > 0 && !isDisable)
             {
                 if (!gameObject.CompareTag("Player"))
                 {
-                    ZombieAttack(zombieTarget);
+                    //ZombieAttack(zombieTarget);
                 }
             }
         }
