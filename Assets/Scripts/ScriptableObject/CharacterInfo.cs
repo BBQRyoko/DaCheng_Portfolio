@@ -7,4 +7,7 @@ public class CharacterInfo : ScriptableObject
 {
     public Sprite sprite;
     public RuntimeAnimatorController animatorController;
+
+    public float viewRange;
+    public float attackDamage;
 }
