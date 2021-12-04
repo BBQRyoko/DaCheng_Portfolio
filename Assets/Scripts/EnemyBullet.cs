@@ -27,7 +27,7 @@ public class EnemyBullet : MonoBehaviour
             if (other.CompareTag("Player"))
             {
                 PlayerStats player = other.GetComponent<PlayerStats>();
-                other.GetComponentInChildren<HealthBar>().hp -= 20;
+                other.GetComponentInChildren<HealthBar>().hp -= bulletDamage;
                 Vector2 difference = other.transform.position - transform.position;
                 difference.Normalize();
                 player.getDamage(bulletDamage, difference * impactNum);

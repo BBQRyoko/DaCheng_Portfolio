@@ -2,9 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class PlayerContrpller : MonoBehaviour
 {
+    PlayerStats playerStats;
     SpriteRenderer characterSprite;
     Rigidbody2D rb;
     public float moveH, moveV;
@@ -17,6 +19,7 @@ public class PlayerContrpller : MonoBehaviour
 
     private void Start()
     {
+        playerStats = GetComponent<PlayerStats>();
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponentInChildren<Animator>();
         characterSprite = GetComponentInChildren<SpriteRenderer>();
@@ -35,19 +38,22 @@ public class PlayerContrpller : MonoBehaviour
     }
     private void FixedUpdate()
     {
-        if (moveH != 0 || moveV != 0)
+        if (!playerStats.isDead) 
         {
-            rb.velocity = new Vector2(moveH, moveV);
-            rb.MovePosition(rb.position + movenment * moveSpeed * Time.fixedDeltaTime);
-        }
+            if (moveH != 0 || moveV != 0)
+            {
+                rb.velocity = new Vector2(moveH, moveV);
+                rb.MovePosition(rb.position + movenment * moveSpeed * Time.fixedDeltaTime);
+            }
 
-        if (moveH < 0)
-        {
-            characterSprite.transform.localScale = new Vector2(-originalScale.x, originalScale.y);
-        }
-        else 
-        {
-            characterSprite.transform.localScale = new Vector2(originalScale.x, originalScale.y);
+            if (moveH < 0)
+            {
+                characterSprite.transform.localScale = new Vector2(-originalScale.x, originalScale.y);
+            }
+            else
+            {
+                characterSprite.transform.localScale = new Vector2(originalScale.x, originalScale.y);
+            }
         }
     }
     void SwitchGun()
@@ -94,5 +100,11 @@ public class PlayerContrpller : MonoBehaviour
         {
             animator.SetTrigger("Down");
         }
+    }
+
+    public void PlayerDeath() 
+    {
+                    SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+
     }
 }
