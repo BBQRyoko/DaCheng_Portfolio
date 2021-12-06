@@ -139,6 +139,8 @@ public class ZombieStats : CharacterStats
             {
                 transform.position = Vector2.MoveTowards(transform.position, curTarget.transform.position, moveSpeed2 * Time.deltaTime);//则僵尸向当前目标以moveSpeed2的速度移动
             }
+
+            PatrolMove();
         }
 
         //目标检测
@@ -285,39 +287,44 @@ public class ZombieStats : CharacterStats
     private void ZombieAttack(Collider2D target)
     {
         Vector2 targerDir = target.transform.position - transform.position;
+        float distance = Vector2.Distance(target.transform.position, transform.position);
+        RaycastHit2D hitInfo = Physics2D.Raycast(transform.position, targerDir, distance, blockingLayer);
 
-        if (!isDisable && !attacked)
+        if (hitInfo.collider == null)
         {
-            attacked = true;
-            if (targerDir.x <= 0) //Left
+            if (!isDisable && !attacked)
             {
-                characterSprite.transform.localScale = new Vector2(-originalScaleX, characterSprite.transform.localScale.y);
-            }
-            else //Right
-            {
-                characterSprite.transform.localScale = new Vector2(originalScaleX, characterSprite.transform.localScale.y);
-            }
-
-            //Melee
-            if (enemyType == EnemyType.Melee)
-            {
-                if (targerDir.y <= 0)
+                attacked = true;
+                if (targerDir.x <= 0) //Left
                 {
-                    animator.SetTrigger("Down");
+                    characterSprite.transform.localScale = new Vector2(-originalScaleX, characterSprite.transform.localScale.y);
                 }
-                else
+                else //Right
                 {
-                    animator.SetTrigger("Up");
+                    characterSprite.transform.localScale = new Vector2(originalScaleX, characterSprite.transform.localScale.y);
                 }
-            }
-            else if (enemyType == EnemyType.Range) 
-            {
-                animator.SetTrigger("Range");
-                targerDir.Normalize();
-                GameObject bullet = Instantiate(bulletPrefab, shootPos.position, Quaternion.identity);
 
-                float angle = Random.Range(-5f, 5f);
-                bullet.GetComponent<EnemyBullet>().SetSpeed(Quaternion.AngleAxis(angle, Vector3.forward) * targerDir);
+                //Melee
+                if (enemyType == EnemyType.Melee)
+                {
+                    if (targerDir.y <= 0)
+                    {
+                        animator.SetTrigger("Down");
+                    }
+                    else
+                    {
+                        animator.SetTrigger("Up");
+                    }
+                }
+                else if (enemyType == EnemyType.Range)
+                {
+                    animator.SetTrigger("Range");
+                    targerDir.Normalize();
+                    GameObject bullet = Instantiate(bulletPrefab, shootPos.position, Quaternion.identity);
+
+                    float angle = Random.Range(-5f, 5f);
+                    bullet.GetComponent<EnemyBullet>().SetSpeed(Quaternion.AngleAxis(angle, Vector3.forward) * targerDir);
+                }
             }
         }
     }
@@ -347,9 +354,11 @@ public class ZombieStats : CharacterStats
         if (hitInfo.collider == null)
         {
             transform.position = Vector2.MoveTowards(transform.position, triggerTransform.position, followSpeed * Time.deltaTime);
-            if (distance <= 0.05) 
+            if (distance <= 0.001) 
             {
                 isStayOnTrigger = true;
+                curMode = npcMode.stay;
+                playerContrpller.GetComponent<PlayerStats>().npcList.Remove(this);
             }
         }
     }

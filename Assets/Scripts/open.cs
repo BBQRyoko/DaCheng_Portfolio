@@ -9,7 +9,7 @@ public class open : MonoBehaviour
 
     private void OnTriggerStay2D(Collider2D other)
     {
-        if (other.CompareTag("Player")||other.CompareTag("Human") )
+        if (other.CompareTag("Player")||other.CompareTag("Human")||other.CompareTag("Zombie"))
         {           
             Door.GetComponent<Animator>().SetBool("Open", true);
         }
@@ -18,7 +18,7 @@ public class open : MonoBehaviour
     }
     private void OnTriggerExit2D(Collider2D other)
     {
-        if (other.CompareTag("Player") || other.CompareTag("Human")) 
+        if (other.CompareTag("Player") || other.CompareTag("Human")||other.CompareTag("Zombie"))
         {
             Door.GetComponent<Animator>().SetBool("Open", false);
         }

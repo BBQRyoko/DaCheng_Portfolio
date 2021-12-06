@@ -1,6 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.Experimental.Rendering.Universal;
+
 
 public class PlayerStats : CharacterStats
 {
@@ -57,6 +60,10 @@ public class PlayerStats : CharacterStats
             if (zombie.isDisable)
             {
                 curRescueTarget = zombie;
+            }
+            else 
+            {
+            
             }
         }
         if (curRescueTarget)
