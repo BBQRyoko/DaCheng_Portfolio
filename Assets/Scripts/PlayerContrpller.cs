@@ -104,7 +104,34 @@ public class PlayerContrpller : MonoBehaviour
 
     public void PlayerDeath() 
     {
-                    SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
 
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.CompareTag("HealthPack"))
+        {
+            if (playerStats.curHealth < playerStats.maxHealth)
+            {
+                playerStats.curHealth += 50;
+                if (playerStats.curHealth >= playerStats.maxHealth)
+                {
+                    playerStats.curHealth = playerStats.maxHealth;
+                }
+                Destroy(collision.gameObject);
+            }
+        }
+        else if (collision.CompareTag("Ammo"))
+        {
+
+        }
+        else if (collision.CompareTag("Gun"))
+        {
+
+        }
+        else if (collision.CompareTag("Poision")) 
+        {
+            playerStats.poisionTimer = 10f;
+        }
     }
 }

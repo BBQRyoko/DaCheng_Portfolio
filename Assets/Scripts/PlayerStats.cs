@@ -17,6 +17,10 @@ public class PlayerStats : CharacterStats
     public float rescueTime;
 
     public List<ZombieStats> npcList = new List<ZombieStats>();
+
+    //状态
+    public float poisionTimer = 0f;
+    public float damageDuration = 0f;
     
     private void Awake()
     {
@@ -47,6 +51,22 @@ public class PlayerStats : CharacterStats
             isDead = true;
             playerContrpller.Invoke("PlayerDeath", 1.1f);
         }
+
+        //中毒
+        if (poisionTimer >= 0) 
+        {
+            poisionTimer -= Time.deltaTime;
+            //StartCoroutine(poisionDamage());
+            if (damageDuration <= 0) 
+            {
+                getDamage(20f, new Vector2(0,0));
+                damageDuration = 3f;
+            }
+            if (damageDuration > 0) 
+            {
+                damageDuration -= Time.deltaTime;
+            }
+        }
     }
 
     void RescueFunction() //救助功能
@@ -57,14 +77,14 @@ public class PlayerStats : CharacterStats
         {
             ZombieStats zombie = rescueTarget.GetComponent<ZombieStats>();
 
-            if (zombie.isDisable)
-            {
-                curRescueTarget = zombie;
-            }
-            else 
-            {
+            //if (zombie.isDisable)
+            //{
+            //    curRescueTarget = zombie;
+            //}
+            //else 
+            //{
             
-            }
+            //}
         }
         if (curRescueTarget)
         {
@@ -118,12 +138,17 @@ public class PlayerStats : CharacterStats
         }
     }
 
-
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.blue;
         Gizmos.DrawWireSphere(transform.position, rescueRadius);
         Gizmos.color = Color.green;
         Gizmos.DrawWireSphere(transform.position, viewRadius);
+    }
+
+    IEnumerator poisionDamage()
+    {
+        curHealth -= 20f;
+        yield return new WaitForSeconds(3f);
     }
 }

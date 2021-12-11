@@ -14,8 +14,6 @@ public class BulletShell : MonoBehaviour
     {
         rigidbody = GetComponent<Rigidbody2D>();
         sprite = GetComponent<SpriteRenderer>();
-
-
     }
 
     private void OnEnable()

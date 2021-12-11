@@ -5,6 +5,7 @@ using UnityEngine. UI;
 
 public class HealthBar : MonoBehaviour
 {
+    PlayerStats playerStats;
     public Image hpImage;
     public Image hpEffectImage;
     public float hp;
@@ -13,12 +14,13 @@ public class HealthBar : MonoBehaviour
 
     private void Start()
     {
-        hp = maxHP;
+        playerStats = FindObjectOfType<PlayerStats>();
+        hp = playerStats.curHealth;
     }
     private void Update()
     {
-        hpImage.fillAmount = hp / maxHP;
-        if(hpEffectImage .fillAmount >hpImage .fillAmount)
+        hpImage.fillAmount = hp / playerStats.maxHealth;
+        if(hpEffectImage.fillAmount >hpImage.fillAmount)
         {
             hpEffectImage.fillAmount -= hurtSpeed;
         }
