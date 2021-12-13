@@ -68,7 +68,7 @@ public class Gun2 : MonoBehaviour
         for(int i = 0; i < bulletNum; i++)
         {
             GameObject bullet = Instantiate(bulletPrefab, muzzlePos.position, Quaternion.identity);
-            //bullet.transform.position = muzzlePos.position;
+            bullet.transform.position = muzzlePos.position;
             float angle = Random.Range(-5f, 5f);
             bullet.GetComponent<Bullet>().SetSpeed(Quaternion.AngleAxis(angle, Vector3.forward) * direction);
             if (bulletNum % 2 == 1)

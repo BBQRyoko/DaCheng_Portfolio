@@ -14,6 +14,7 @@ public class PlayerContrpller : MonoBehaviour
     [SerializeField] Animator animator;
     [SerializeField] int gunsNum;
     [SerializeField] GameObject[] guns;
+    [SerializeField] List<GameObject> gunList = new List<GameObject>();
     Vector2 movenment;
     Vector2 originalScale;
 
@@ -23,7 +24,7 @@ public class PlayerContrpller : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponentInChildren<Animator>();
         characterSprite = GetComponentInChildren<SpriteRenderer>();
-        guns[0].SetActive(true);
+        gunList[0].SetActive(true);
         originalScale = characterSprite.transform.localScale;
     }
 
@@ -60,26 +61,26 @@ public class PlayerContrpller : MonoBehaviour
     {
         if(Input.GetKeyDown(KeyCode.Q))
         {
-            guns[gunsNum].SetActive(false);
+            gunList[gunsNum].SetActive(false);
             if (gunsNum >= 0)
             {
                 gunsNum = gunsNum + 1;
-                if (gunsNum >= guns.Length ) 
+                if (gunsNum >= gunList.Count) 
                 {
                     gunsNum = 0;
                 }
             }
-            guns[gunsNum].SetActive(true);
+            gunList[gunsNum].SetActive(true);
         }
         //if (Input.GetKeyDown(KeyCode.E))
         //{
         //    guns[gunsNum].SetActive(false);
-        //    if (gunsNum <= guns.Length)
+        //    if (gunsNum <= guns.Length-1)
         //    {
-        //        gunsNum = gunsNum -1;
+        //        gunsNum = gunsNum - 1;
         //        if (gunsNum <= -1)
         //        {
-        //            gunsNum = guns.Length-1;
+        //            gunsNum = guns.Length - 1;
         //        }
         //    }
         //    guns[gunsNum].SetActive(true);
@@ -121,13 +122,10 @@ public class PlayerContrpller : MonoBehaviour
                 Destroy(collision.gameObject);
             }
         }
-        else if (collision.CompareTag("Ammo"))
+        else if (collision.CompareTag("Gun2"))
         {
-
-        }
-        else if (collision.CompareTag("Gun"))
-        {
-
+            gunList.Add(guns[1]);
+            Destroy(collision.gameObject);
         }
         else if (collision.CompareTag("Poision")) 
         {

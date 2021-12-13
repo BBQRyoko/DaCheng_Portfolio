@@ -11,11 +11,16 @@ public class CharacterStats : MonoBehaviour
     [Header("Common Stats")] //基础数值
     public float maxHealth;
     public float curHealth;
+    public bool isGetingDamage;
 
     [Header("Layers")]
     public LayerMask zombieLayer; //僵尸层
     [SerializeField] protected float viewRadius; //可见范围
 
+    private void LateUpdate()
+    {
+        isGetingDamage = animator.GetBool("GetDamage");
+    }
     public void getDamage(float damage, Vector2 direction)
     {
         if (transform.CompareTag("Player")) 
@@ -24,20 +29,23 @@ public class CharacterStats : MonoBehaviour
             transform.GetComponent<PlayerContrpller>().moveH = 0;
         }
         Rigidbody2D rig2D = transform.GetComponent<Rigidbody2D>();
-        curHealth -= damage;
-        if (curHealth <= 0)
+        if (!isGetingDamage) 
         {
-            curHealth = 0;
-            if (transform.CompareTag("Zombie"))
+            animator.SetBool("GetDamage", true);
+            curHealth -= damage;
+            if (curHealth <= 0)
             {
-                animator.SetBool("preDead", true);
+                curHealth = 0;
+                if (transform.CompareTag("Zombie"))
+                {
+                    animator.SetBool("preDead", true);
+                }
+                else if (transform.CompareTag("Human"))
+                {
+                    //人类的预死亡
+                }
             }
-            else if (transform.CompareTag("Human")) 
-            {
-                //人类的预死亡
-            }
+            rig2D.AddForce(direction, ForceMode2D.Impulse);        
         }
-        rig2D.AddForce(direction, ForceMode2D.Impulse);
-        animator.SetTrigger("GetDamage");
     }
 }

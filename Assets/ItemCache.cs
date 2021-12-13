@@ -16,20 +16,19 @@ public class ItemCache : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (canOpen && !isOpened) 
+        if (canOpen && !isOpened)
         {
             if (Input.GetKeyDown(KeyCode.E))
             {
-                Debug.Log("Opened");
                 transform.GetComponent<SpriteRenderer>().sprite = openedCache;
                 interactIcon.SetActive(false);
-                foreach (GameObject curItem in containedItem) 
+                foreach (GameObject curItem in containedItem)
                 {
                     GameObject item = Instantiate(curItem, transform.position, transform.rotation);
                     float angel = Random.Range(-45f, 45f);
                     item.GetComponent<Rigidbody2D>().velocity = Quaternion.AngleAxis(angel, Vector3.forward) * Vector3.up * itemInitialSpeed;
                     item.GetComponent<Rigidbody2D>().gravityScale = 3;
-                    item.GetComponent<BoxCollider2D>().isTrigger = true;
+                    item.GetComponent<BoxCollider2D>().enabled = false;
                     StartCoroutine(Stop(item));
                 }
                 isOpened = true;
@@ -59,5 +58,7 @@ public class ItemCache : MonoBehaviour
         yield return new WaitForSeconds(fallTime);
         item.GetComponent<Rigidbody2D>().velocity = Vector2.zero;
         item.GetComponent<Rigidbody2D>().gravityScale = 0;
+        item.GetComponent<BoxCollider2D>().enabled = true;
+        item.GetComponent<BoxCollider2D>().isTrigger = true;
     }
 }

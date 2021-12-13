@@ -20,7 +20,7 @@ public class PlayerStats : CharacterStats
 
     //状态
     public float poisionTimer = 0f;
-    public float damageDuration = 0f;
+    public float damageDuration = 1f;
     
     private void Awake()
     {
@@ -53,10 +53,9 @@ public class PlayerStats : CharacterStats
         }
 
         //中毒
-        if (poisionTimer >= 0) 
+        if (poisionTimer > 0) 
         {
             poisionTimer -= Time.deltaTime;
-            //StartCoroutine(poisionDamage());
             if (damageDuration <= 0) 
             {
                 getDamage(20f, new Vector2(0,0));
@@ -77,14 +76,14 @@ public class PlayerStats : CharacterStats
         {
             ZombieStats zombie = rescueTarget.GetComponent<ZombieStats>();
 
-            //if (zombie.isDisable)
-            //{
-            //    curRescueTarget = zombie;
-            //}
-            //else 
-            //{
-            
-            //}
+            if (zombie.isDisable)
+            {
+                curRescueTarget = zombie;
+            }
+            else
+            {
+
+            }
         }
         if (curRescueTarget)
         {
@@ -103,7 +102,6 @@ public class PlayerStats : CharacterStats
                     curRescue.GetComponentInChildren<HealthBar>().hp = maxHealth;
                     curRescue.gameObject.tag = "Human";
                     rescueTime = 0;
-
                 }
             }
             else if (Input.GetKeyUp(KeyCode.E)) //若输入E的时间 变为0时 则救助对象的救助进度量变为0

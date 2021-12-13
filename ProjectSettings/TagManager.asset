@@ -11,9 +11,10 @@ TagManager:
   - Shadow
   - Trigger
   - HealthPack
-  - Gun
   - Ammo
   - Poision
+  - Gun2
+  - LaserTower
   layers:
   - Default
   - TransparentFX

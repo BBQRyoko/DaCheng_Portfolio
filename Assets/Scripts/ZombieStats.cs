@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.AI;
 
 public class ZombieStats : CharacterStats
 {
     PlayerContrpller playerContrpller;
+    NavMeshAgent navMeshAgent;
 
     //当前的状态
     public bool isHuman;
@@ -64,6 +66,9 @@ public class ZombieStats : CharacterStats
 
     private void Awake()
     {
+        navMeshAgent = GetComponent<NavMeshAgent>();
+        navMeshAgent.updateRotation = false;
+        navMeshAgent.updateUpAxis = false;
         playerContrpller = FindObjectOfType<PlayerContrpller>();
         curHealth = maxHealth; //当前血量为最大值
         animator = GetComponentInChildren<Animator>();
@@ -86,7 +91,6 @@ public class ZombieStats : CharacterStats
             }
         }
     }
-
     void Update()
     {
         animator.runtimeAnimatorController = curStatusInfo.animatorController;
@@ -107,7 +111,7 @@ public class ZombieStats : CharacterStats
         gameObject.layer = 8;//所有僵尸所在物理层为第8层
         curStatusInfo = statusList[0];
 
-        if (curHealth <= 0) //如果当前血量低于0 =死亡
+        if (curHealth <= 0) //如果当前血量低于0=死亡
         {
             isDisable = true;//就不可以移动
             rescueButton.gameObject.SetActive(true);//救助按钮显示出来
@@ -203,7 +207,8 @@ public class ZombieStats : CharacterStats
 
             if (distance >= 2)
             {
-                transform.position = Vector2.MoveTowards(transform.position, playerContrpller.transform.position, followSpeed * Time.deltaTime);//当距离大于2时 则NPC以followSpeed的速递向玩家移动
+                navMeshAgent.SetDestination(curTarget.transform.position);
+                //transform.position = Vector2.MoveTowards(transform.position, playerContrpller.transform.position, followSpeed * Time.deltaTime);//当距离大于2时 则NPC以followSpeed的速递向玩家移动
                 npcCommand.SetActive(false);
             }
             else if (distance <= 1 && distance > 0)
