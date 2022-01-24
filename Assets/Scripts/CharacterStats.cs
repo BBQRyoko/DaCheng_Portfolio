@@ -45,7 +45,7 @@ public class CharacterStats : MonoBehaviour
                     //人类的预死亡
                 }
             }
-            rig2D.AddForce(direction, ForceMode2D.Impulse);        
+            rig2D.AddForce(direction, ForceMode2D.Impulse);
         }
     }
 }

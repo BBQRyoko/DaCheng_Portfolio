@@ -22,7 +22,7 @@ public class Bullet : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (!other.CompareTag("Player")&&!other.CompareTag ("Bullet") && !other.CompareTag("Shadow"))
+        if (!other.CompareTag("Player")&&!other.CompareTag ("Bullet") && !other.CompareTag("Shadow") )
         {
             if (other.CompareTag("Zombie"))
             {
@@ -33,6 +33,10 @@ public class Bullet : MonoBehaviour
                 zombie.getDamage(bulletDamage, difference * impactNum);
                 //other.transform.position = new Vector2(other.transform.position.x + difference.x,
                 //other.transform.position.y + difference.y);
+            }
+            else if (other.CompareTag("Boss")) 
+            {
+            
             }
             // Instantiate(explosionPrefab, transform.position, Quaternion.identity);
             GameObject exp = ObjectPool.Instance.GetObject(explosionPrefab);

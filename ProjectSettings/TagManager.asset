@@ -15,6 +15,10 @@ TagManager:
   - Poision
   - Gun2
   - LaserTower
+  - Boss
+  - EnergyShield
+  - Wall
+  - Box
   layers:
   - Default
   - TransparentFX
